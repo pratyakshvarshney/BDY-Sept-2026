@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@300;400;500;700&family=Caveat:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- ══════════════════════════════════════
+     ROCKET LAUNCH LOADER
+     Big rocket fills the screen. Tap anywhere
+     (not a button) to launch it — smoke floods
+     the whole screen, then clears in a hazy
+     fade to reveal the site underneath.
+══════════════════════════════════════ -->
+    <div id="intro-screen">
+      <div class="loader-stars" id="loaderStars"></div>
+
+      <div class="intro-content" id="introContent">
+        <div class="rocket-wrap" id="rocketWrap">
+          <svg
+            class="big-rocket"
+            id="rocketSvg"
+            viewBox="0 0 300 560"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <linearGradient id="hullGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#e9e8f5" />
+                <stop offset="45%" stop-color="#f4ecd8" />
+                <stop offset="100%" stop-color="#cbb98e" />
+              </linearGradient>
+              <linearGradient id="noseGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ff9eb5" />
+                <stop offset="100%" stop-color="#a99bff" />
+              </linearGradient>
+              <radialGradient id="windowGrad" cx="35%" cy="30%" r="75%">
+                <stop offset="0%" stop-color="#fffaf0" />
+                <stop offset="55%" stop-color="#a99bff" />
+                <stop offset="100%" stop-color="#4a3766" />
+              </radialGradient>
+              <linearGradient id="finGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#ff9eb5" />
+                <stop offset="100%" stop-color="#7ed9a8" />
+              </linearGradient>
+              <radialGradient id="flameGrad" cx="50%" cy="0%" r="90%">
+                <stop offset="0%" stop-color="#fff4d6" />
+                <stop offset="35%" stop-color="#ffcf6b" />
+                <stop offset="75%" stop-color="#ff8a3d" />
+                <stop offset="100%" stop-color="#ff5f3d" stop-opacity="0" />
+              </radialGradient>
+              <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#f4ecd8" stop-opacity="0.55" />
+                <stop offset="100%" stop-color="#f4ecd8" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+
+            <!-- ambient glow behind the rocket -->
+            <ellipse
+              cx="150"
+              cy="230"
+              rx="170"
+              ry="230"
+              fill="url(#glowGrad)"
+            />
+
+            <!-- fins -->
+            <path d="M92 360 L28 452 L92 428 Z" fill="url(#finGrad)" />
+            <path d="M208 360 L272 452 L208 428 Z" fill="url(#finGrad)" />
+
+            <!-- lower hull -->
+            <path
+              d="M100 200 L100 400 Q150 424 200 400 L200 200 Z"
+              fill="url(#hullGrad)"
+            />
+
+            <!-- body stripe -->
+            <rect
+              x="100"
+              y="280"
+              width="100"
+              height="20"
+              fill="#a99bff"
+              opacity="0.7"
+            />
+
+            <!-- nose cone -->
+            <path d="M100 200 Q150 30 200 200 Z" fill="url(#noseGrad)" />
+
+            <!-- window -->
+            <circle cx="150" cy="235" r="34" fill="#1a1330" />
+            <circle cx="150" cy="235" r="27" fill="url(#windowGrad)" />
+            <circle cx="141" cy="225" r="7" fill="#ffffff" opacity="0.55" />
+
+            <!-- engine base -->
+            <rect
+              x="112"
+              y="396"
+              width="76"
+              height="26"
+              rx="6"
+              fill="#3a2b52"
+            />
+
+            <!-- flame / exhaust -->
+            <g id="flameGroup" class="flame-group">
+              <path
+                class="flame-main"
+                d="M150 420 C 115 460, 122 510, 150 552 C 178 510, 185 460, 150 420 Z"
+                fill="url(#flameGrad)"
+              />
+              <path
+                class="flame-core"
+                d="M150 420 C 132 448, 136 480, 150 512 C 164 480, 168 448, 150 420 Z"
+                fill="#fff4d6"
+                opacity="0.85"
+              />
+            </g>
+          </svg>
+        </div>
+
+        <p class="intro-hint" id="introHint">
+          tap anywhere to launch the night
+        </p>
+      </div>
+
+      <!-- full-screen smoke that floods the view on launch, then clears -->
+      <div class="smoke-overlay" id="smokeOverlay" aria-hidden="true"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+     MAIN SITE — hidden until the smoke clears
+══════════════════════════════════════ -->
+    <div id="site-content">
+      <canvas id="sky"></canvas>
+
+      <button class="music-toggle" id="musicToggle" aria-label="toggle music">
+        ♪
+      </button>
+      <audio id="bday-audio" loop>
+        <!-- ✏️ drop your song file in the assets folder and point this at it -->
+        <source src="music123.mp3" type="audio/mpeg" />
+      </audio>
+
+      <main>
+        <!-- HERO -->
+        <section class="hero" id="hero">
+          <div class="moon-wrap">
+            <div class="moon-glow"></div>
+            <div
+              class="moon-flip"
+              id="moon"
+              role="button"
+              aria-label="Tap the moon"
+              tabindex="0"
+            >
+              <div class="moon-face moon-front">
+                <div class="crater c1"></div>
+                <div class="crater c2"></div>
+                <div class="crater c3"></div>
+                <div class="crater c4"></div>
+              </div>
+              <div class="moon-face moon-back">
+                <!-- ✏️ swap this src for her real photo -->
+                <img src="img123.jpg" alt="Moon" />
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-copy">
+            <p class="eyebrow">a small sky, made for you</p>
+            <h1>Happy Birthday,<br /><span id="her-name">Baboo</span></h1>
+            <p class="hero-sub">
+              Somewhere between the moon and the nearest star, this whole sky
+              quietly decided it was your night.
+            </p>
+
+            <p class="sky-note" id="sky-note">made of moonlight ✦</p>
+          </div>
+
+          <img
+            class="sticker sticker-hero"
+            src="bubu-dudu.png"
+            alt=""
+            aria-hidden="true"
+          />
+
+          <div class="scroll-cue" aria-hidden="true">
+            <span></span>
+            <br>
+            <p>keep going</p>
+          </div>
+        </section>
+
+        <!-- MOON MEANING -->
+        <section class="reveal moon-meaning">
+          <img
+            class="side-sticker side-left"
+            src="chikorita.png"
+            alt=""
+            aria-hidden="true"
+          />
+          <img
+            class="side-sticker side-right"
+            src="bulbasaur.png"
+            alt=""
+            aria-hidden="true"
+          />
+          <div class="section-inner">
+            <p class="kicker">why the moon</p>
+            <h2>The moon has always looked a little like you Baboo.</h2>
+            <p class="lede">
+              Quiet, even when it's the brightest thing in the room. Changing
+              shape through the month and somehow lovelier in every one of them.
+              Pulling tides without ever raising its voice. People have spent
+              centuries writing poems about a rock in the sky just because it
+              reminded them of someone — and honestly, I understand them a lot
+              better now.
+            </p>
+            <p class="lede">
+              The stars are just the noise around that — every little flicker of
+              joy, love, and stray energy that shows up whenever you're near.
+              They don't compete with the moon. They just keep it company.
+            </p>
+          </div>
+        </section>
+
+        <!-- BUBU & DUDU -->
+        <section class="reveal constellation-section">
+          <div class="section-inner">
+            <p class="kicker">a constellation of two</p>
+            <h2>Some bonds don't need a map. Just sky.</h2>
+            <p class="lede">
+              Two shapes, one sky, and one line of stars in between — that's the
+              whole idea behind Bubu &amp; Dudu, isn't it? Distance is just
+              stardust that hasn't been connected yet, and some nights it feels
+              like it already has.
+            </p>
+            <img
+              class="sticker sticker-const"
+              src="./bubu-dudu.png"
+              alt=""
+              aria-hidden="true"
+            />
+          </div>
+        </section>
+
+        <!-- PLAYFUL NOD -->
+        <section class="reveal sprout-section">
+          <div class="section-inner">
+            <p class="kicker">a very specific kind of energy</p>
+            <h2>If you were a starter, you'd be a Chikorita.</h2>
+            <p class="lede">
+              Calm, sweet, and somehow everyone admires the glow-up. 
+            </p>
+            <div class="starter-duo">
+              <img
+                class="sticker sticker-inline sticker-chiko"
+                src="./chikorita.png"
+                alt="Chikorita"
+              />
+              <img
+                class="sticker sticker-inline sticker-bulba"
+                src="./bulbasaur.png"
+                alt="Bulbasaur"
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- VIDEO -->
+        <section class="reveal video-section">
+          <img
+            class="side-sticker side-left"
+            src="bubu-dudu.png"
+            alt=""
+            aria-hidden="true"
+          />
+          <div class="section-inner">
+            <p class="kicker">one more thing</p>
+            <h2>A little video, just for this page.</h2>
+            <p class="lede">
+              — drop the real one in, this is only a placeholder frame.
+            </p>
+            <div class="video-frame">
+              <div class="video-frame-corner tl"></div>
+              <div class="video-frame-corner tr"></div>
+              <div class="video-frame-corner bl"></div>
+              <div class="video-frame-corner br"></div>
+              <!-- ✏️ replace the poster image and add a <source src="your-video.mp4" type="video/mp4"> inside -->
+              <video id="birthday-video" controls autoplay>
+                <source src="video123.mp4" type="video/mp4" />
+                Your browser doesn't support embedded video.
+              </video>
+            </div>
+          </div>
+        </section>
+
+        <!-- SCATTERED LETTERS -->
+        <section class="reveal letters-section">
+          <div class="section-inner">
+            <p class="kicker">for you, from me</p>
+            <h2>A few notes, left lying around.</h2>
+            <p class="lede">
+              Drag them apart, spin them (grab the little pin), read it the way you like.
+            </p>
+
+            <div class="scatter-area" id="scatter-area">
+              <div class="paper" style="top: 6%; left: 2%">
+                <span class="rotate-handle" title="drag to rotate">✦</span>
+                <p>
+                  There isn't a version of this year that doesn't have you in
+                  it, and I'm glad about that in a way I don't say out loud
+                  often enough.
+                </p>
+                <img
+                  class="sticker sticker-pin sticker-pin-1"
+                  src="./bulbasaur.png"
+                  alt=""
+                  aria-hidden="true"
+                />
+              </div>
+
+              <div class="paper" style="top: 30%; left: 34%">
+                <span class="rotate-handle" title="drag to rotate">✦</span>
+                <p>
+                  Here's to another year of bad jokes, good company, and someone
+                  always glancing up to check if the moon looks the way it did
+                  the night we talked about it.
+                </p>
+                <img
+                  class="sticker sticker-pin sticker-pin-2"
+                  src="bubu-dudu.png"
+                  alt=""
+                  aria-hidden="true"
+                />
+              </div>
+
+              <div class="paper" style="top: 4%; left: 64%">
+                <span class="rotate-handle" title="drag to rotate">✦</span>
+                <p>
+                  Happy birthday — from someone who's genuinely glad the sky
+                  decided to put you in it.
+                </p>
+                <img
+                  class="sticker sticker-pin sticker-pin-3"
+                  src="chikorita.png"
+                  alt=""
+                  aria-hidden="true"
+                />
+              </div>
+            </div>
+
+            <p class="letter-sign">— written under the same sky</p>
+          </div>
+        </section>
+
+        <!-- CAKE -->
+        <section class="reveal cake-section">
+          <div class="section-inner">
+            <p class="kicker">before you go</p>
+            <h2> Blow the candle.</h2>
+            <p class="lede" id="cake-caption">tap the flame to blow it out</p>
+
+            <div class="cake-wrap">
+              <svg class="cake" id="cake" viewBox="0 0 220 200">
+                <ellipse cx="110" cy="178" rx="90" ry="14" fill="#3a2b52" />
+                <rect
+                  x="35"
+                  y="120"
+                  width="150"
+                  height="55"
+                  rx="6"
+                  fill="#3a2b52"
+                />
+                <rect
+                  x="35"
+                  y="120"
+                  width="150"
+                  height="14"
+                  rx="6"
+                  fill="#ff9eb5"
+                  opacity="0.55"
+                />
+                <rect
+                  x="50"
+                  y="70"
+                  width="120"
+                  height="52"
+                  rx="6"
+                  fill="#4a3766"
+                />
+                <rect
+                  x="50"
+                  y="70"
+                  width="120"
+                  height="12"
+                  rx="6"
+                  fill="#a99bff"
+                  opacity="0.5"
+                />
+                <circle cx="70" cy="112" r="4" fill="#f4ecd8" />
+                <circle cx="95" cy="105" r="4" fill="#ff9eb5" />
+                <circle cx="130" cy="110" r="4" fill="#f4ecd8" />
+                <circle cx="150" cy="103" r="4" fill="#a99bff" />
+                <rect
+                  x="105"
+                  y="45"
+                  width="8"
+                  height="28"
+                  rx="2"
+                  fill="#f4ecd8"
+                />
+                <g id="flame-group">
+                  <ellipse
+                    class="flame"
+                    cx="109"
+                    cy="36"
+                    rx="7"
+                    ry="12"
+                    fill="#ffcf6b"
+                  />
+                  <ellipse
+                    class="flame-inner"
+                    cx="109"
+                    cy="39"
+                    rx="3.5"
+                    ry="6"
+                    fill="#ff8a3d"
+                  />
+                </g>
+                <g id="smoke-group" class="smoke-hidden">
+                  <path
+                    class="smoke"
+                    d="M109 36 C 100 20, 118 12, 109 -4"
+                    stroke="#c9c6e0"
+                    stroke-width="3"
+                    fill="none"
+                    stroke-linecap="round"
+                  />
+                </g>
+              </svg>
+              <img
+                class="side-sticker side-left"
+                src="chikorita.png"
+                alt=""
+                aria-hidden="true"
+              />
+              <img
+                class="side-sticker side-right"
+                src="bulbasaur.png"
+                alt=""
+                aria-hidden="true"
+              />
+              <!-- <img class="sticker sticker-cake" src="chikorita.png" alt="" aria-hidden="true" /> -->
+            </div>
+          </div>
+        </section>
+
+        <!-- WISH -->
+        <section class="reveal wish-section" id="wish-section">
+          <img
+            class="side-sticker side-right"
+            src="bubu-dudu.png"
+            alt=""
+            aria-hidden="true"
+          />
+          <div class="section-inner">
+            <p class="kicker">last thing</p>
+            <h2>Make a wish.</h2>
+            <p class="wish-reveal" id="wish-reveal">
+              Every year just gets to have more of you in it. Happy birthday.
+            </p>
+            <p class="wish-hint">
+              keep an eye on the sky — it doesn't stay still for long
+            </p>
+            <button class="shooting-star-btn" id="shooting-star-btn">
+              ✦ send a shooting star
+            </button>
+          </div>
+        </section>
+
+        <footer>
+          <img
+            class="sticker sticker-footer"
+            src="bubu-dudu.png"
+            alt=""
+            aria-hidden="true"
+          />
+          <p>
+            made under the same moon, for
+            <span class="footer-name">Baboo</span> 🌙
+          </p>
+        </footer>
+      </main>
+    </div>
+    <!-- end #site-content -->
+
+    <script src="script.js"></script>
+  </body>
+</html>
