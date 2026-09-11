@@ -1406,3 +1406,22 @@ footer {
   .section-inner { padding: 10vh 5vw; }
   .rocket-wrap { width: min(72vw, 280px); height: min(70vh, 480px); }
 }
+/* ---------- MIC BLOW (fook maarke bhujhao) ---------- */
+.mic-status {
+  margin-top: 1.2em;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  min-height: 1.2em;
+}
+
+/* ---------- TRIM TRAILING SPACE AT THE VERY END ---------- */
+/* every .section-inner carries 14vh top+bottom padding by design, but
+   stacked with the footer's own padding it left a big empty gap at the
+   bottom of the page — pull both in just for the last section + footer */
+#wish-section .section-inner {
+  padding-bottom: 4vh;
+}
+footer {
+  padding: 2vh 5vw 4vh;
+}
