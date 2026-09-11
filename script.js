@@ -1,7 +1,7 @@
 /* ======================================================
    ✏️  EDIT THIS LINE — her name
    ====================================================== */
-const HER_NAME = "Star";
+const HER_NAME = "Baboo";
 /* ====================================================== */
 
 document.getElementById("her-name").textContent = HER_NAME;
